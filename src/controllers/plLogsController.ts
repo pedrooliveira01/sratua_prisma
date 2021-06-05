@@ -66,7 +66,7 @@ rotas.put('/', async (req, res) => {
 
 
 rotas.delete('/:id_cliente', async (req, res) => {
-  const { id_cliente, ordem } = req.params;
+  const { id_cliente } = req.params;
   prisma.pL_LOGS.deleteMany({ 
       where: {
         ID_CLIENTE: Number(id_cliente)
