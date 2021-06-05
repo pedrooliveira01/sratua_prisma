@@ -1,0 +1,171 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model ATUALIZACAO {
+  ID_ATUALIZACAO Int      @id @default(autoincrement())
+  ARQUIVO        String   @db.VarChar(120)
+  VERSAO         Int?
+  DATA           DateTime @default(now()) @db.Timestamp(0)
+  ATIVO          Int      @default(1)
+  FECHA_SISTEMA  Int      @default(0)
+  COMPACTADO     Int      @default(0)
+  LINK           String   @default("") @db.VarChar(150)
+}
+
+model CLIENTES {
+  ID_CLIENTE     Int      @id @default(autoincrement())
+  RAZAO          String?  @db.VarChar(150)
+  DATA_CADASTRO  DateTime @default(now()) @db.Timestamp(0)
+  CIDADE         String?  @db.VarChar(150)
+  TELEFONE       String?  @db.VarChar(15)
+  CELULAR        String?  @db.VarChar(15)
+  EMAIL          String?  @db.VarChar(150)
+  LIBERA         Int      @default(0)
+  VERSAO_ATUAL   String?  @default("0") @db.VarChar(15)
+  VOLUME_M       Int?     @default(0)
+  VOLUME_A       Int?     @default(0)
+  ABRE_RADIO     Int?     @default(0)
+  DIR_ARQ        String?  @db.VarChar(150)
+  TOTAL_MUSICA   Int?     @default(0)
+  TOTAL_ANUNCIO  Int?     @default(0)
+  TOTAL_VIDEO    Int?     @default(0)
+  TOTAL_IMAGEM   Int?     @default(0)
+  ATUALIZAR      Int?     @default(0)
+  MUDAR_MP3      Int?     @default(0) @db.SmallInt
+  LOCAL_ANUNCIO  String?  @db.VarChar(30)
+  LOCAL_MUSICA   String?  @default("1") @db.VarChar(30)
+  LOCAL_IMAGEM   String?  @default("") @db.VarChar(30)
+  LOCAL_VIDEO    String?  @db.VarChar(30)
+  CON_ID         String?  @db.VarChar(15)
+  CON_SENHA      String?  @default("") @db.VarChar(15)
+  PROXY_ENDERECO String?  @db.VarChar(30)
+  PROXY_PORTA    Int      @default(0)
+  CODIGO         Int      @default(0)
+  SEMDL          Int      @default(0)
+  ID_S3          Int
+  SENHA          String?  @db.VarChar(8)
+  USA_MES        Int?     @default(0)
+  SEGUE_CLIENTE  Int      @default(0)
+
+  @@index([LIBERA, ID_CLIENTE, RAZAO], name: "CONS_CLIENTES_1")
+  @@index([RAZAO], name: "CONS_CLIENTES_RAZAO")
+}
+
+model CLIENTES_COMANDO {
+  ID_COMANDO   Int       @id @default(autoincrement())
+  ID_CLIENTE   Int
+  COMANDO      String    @db.Text
+  STATUS       Int       @default(0)
+  EXECUTADO_EM DateTime? @db.Timestamp(0)
+  DATA         DateTime? @db.Timestamp(0)
+  RETORNO      String?   @db.Text 
+}
+
+model CLIENTES_CONTROLE {
+  ID_CLIENTE Int @id
+  STATUS     Int @default(0)
+  REINICIAR  Int @default(0)
+  FECHAR     Int @default(0)
+  REABRIR    Int @default(0)
+}
+
+model CLIENTES_PL {
+  ID_PL      Int 
+  ID_CLIENTE Int
+  DIA_SEMANA Int
+  HORARIO    String?  @default(dbgenerated("00:00:00")) @db.VarChar(8)  
+  STATUS     Int      @default(1)
+
+  @@id([ID_PL, ID_CLIENTE, DIA_SEMANA])  
+
+}
+
+model CLIENTES_STATUS {
+  ID_CLIENTE            Int       @id
+  STATUS                Int       @default(0)
+  PL_ORDEM              Int?      @default(0)
+  PL_ARQ                String    @db.VarChar(180)
+  PL_TEMPO              Int?      @default(0)
+  ATUALIZADO_EM         DateTime? @default(now()) @db.Timestamp(0)
+  TEMPO_LIGADO          String?   @db.VarChar(8)
+  PL_LAST_ID            Int       @default(0)
+  PL_HORARIO_CARREGOU   DateTime? @db.Timestamp(0)
+  PL_HORARIO_RECARREGAR DateTime? @db.Timestamp(0)
+  PL_DIA_SEMANA         Int       @default(0)
+  PL_DATA               DateTime  @db.DateTime(0)
+}
+
+model GERADOR {
+  ATIVO Int    @default(0)
+  CHAVE String @default("0") @db.VarChar(50)
+  ID    Int    @id
+}
+
+model LOGS {
+  ID_LOG      Int       @id @default(autoincrement())
+  ID_CLIENTE  Float     @db.Float
+  DESCRICAO   String?   @db.Text
+  DATA        DateTime  @default(now()) @db.Timestamp(0)
+  IMPORTANCIA Int?      @default(1)
+  LOG_DATA    DateTime? @db.Date
+
+  @@index([ID_CLIENTE, LOG_DATA], name: "CONS_LOGS_DATA")
+  @@index([ID_CLIENTE], name: "CONS_LOGS_DESC")
+  @@index([ID_CLIENTE], name: "ID_CLIENTE")
+}
+
+model PARAMETROS_S3 {
+  NOME          String @id @db.VarChar(40)
+  ACCOUNTNAME   String @db.VarChar(40)
+  ACCOUNTKEY    String @db.VarChar(40)
+  DL_SIMULTANEO Int
+  ATIVO         Int    @default(0)
+  BUCKETNAME    String @db.VarChar(40)
+  PROTOCOLO     String @default("https") @db.VarChar(10)
+}
+
+model PL {
+  ID_PL     Int    @id @default(autoincrement())
+  DESCRICAO String @default("") @db.VarChar(200)
+}
+
+model PL_ITEM {
+  ID_PL      Int
+  ID_PL_ITEM Int     @id @default(autoincrement())
+  LOCAL      String? @default("") @db.VarChar(150)
+  DIRETORIO  String? @default("") @db.VarChar(150)
+  ORDEM      Int
+  ARQUIVO    String  @db.VarChar(150)
+  VOLUME     Int
+}
+
+model PL_LOGS {
+  ID_CLIENTE Int
+  ORDEM      Int
+  TIPO       Int?
+  DESCRICAO  String? @db.VarChar(150)
+  VOLUME     Int?
+
+  @@id([ID_CLIENTE, ORDEM])
+  @@index([ID_CLIENTE, DESCRICAO], name: "CONS_PLAY_MP3")
+  @@index([ID_CLIENTE], name: "ID_PLAYLIST_LOGS")
+}
+
+model S3 {
+  ID_S3     Int    @id @default(autoincrement())
+  DESCRICAO String @db.VarChar(200)
+}
+
+model S3_ITEM {
+  ID_S3      Int
+  ID_S3_ITEM Int    @id @default(autoincrement())
+  BUCKET     String @db.VarChar(40)
+  DIRETORIO  String @db.VarChar(150)
+  PASTA      String @db.VarChar(150)
+}
