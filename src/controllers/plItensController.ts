@@ -74,3 +74,37 @@ rotas.delete('/:id', async (req, res) => {
     .then( response => res.status(200).json({ result: true}))
     .catch( err => res.status(200).json({ result: false}))
 })
+
+
+rotas.post('/upsert/', async (req, res) => {
+  const result = [];
+  const data = req.body; 
+  try {
+    if ( Array.isArray(data) ) {
+      let idPLDeleted = 0;
+      for (const [idx, element] of data.entries()) {
+        if (idPLDeleted !== element.ID_PL) {
+          idPLDeleted = element.ID_PL  
+          await prisma.pL_ITEM.deleteMany({
+            where:{
+              ID_PL:element.ID_PL
+            }
+          })            
+        }     
+
+        const response = await prisma.pL_ITEM.create({
+          data: element          
+        })  
+         
+        result.push(response)          
+      };
+      res.status(200).json(result)
+    } else {
+      res.status(200).json({result: false})
+    }    
+
+  } catch (err) {
+    console.log(err.message)
+    res.status(200).json({ result: false})
+  } 
+})
