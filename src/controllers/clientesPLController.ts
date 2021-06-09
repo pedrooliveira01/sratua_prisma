@@ -78,3 +78,37 @@ const { id_cliente, id_pl, dia_semana } = req.params;
     .then( response => res.status(200).json({ result: true}))
     .catch( err => res.status(200).json({ result: false}))
 })
+
+
+rotas.post('/upsert/', async (req, res) => {
+  const result = [];
+  const data = req.body; 
+  try {
+    if ( Array.isArray(data) ) {
+      let idPLDeleted = 0;
+      for (const [idx, element] of data.entries()) {
+        if (idPLDeleted !== element.ID_CLIENTE) {
+          idPLDeleted = element.ID_CLIENTE  
+          await prisma.cLIENTES_PL.deleteMany({
+            where:{
+              ID_CLIENTE:element.ID_CLIENTE
+            }
+          })            
+        }     
+
+        const response = await prisma.cLIENTES_PL.create({
+          data: element          
+        })  
+         
+        result.push(response)          
+      };
+      res.status(200).json(result)
+    } else {
+      res.status(200).json({result: false})
+    }    
+
+  } catch (err) {
+    console.log(err.message)
+    res.status(200).json({ result: false})
+  } 
+})
