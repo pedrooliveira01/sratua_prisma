@@ -9,14 +9,40 @@ export const rotas = Router();
 rotas.post('/find', async (req, res) => {
   const find = req.body;
   prisma.cLIENTES.findMany(find)
-    .then(response => res.status(200).json(response) )
+    .then( async response =>  {
+      if ( Array.isArray(response) ) {
+        for (const [idx, element] of response.entries()) {
+          
+           const response2 = await prisma.cLIENTES.findUnique({
+            where:{ID_CLIENTE:element.SEGUE_CLIENTE}           
+          })
+          if (response2 && response2.ID_S3 > 0) {
+            element.ID_S3 = response2.ID_S3      
+          }    
+        }  
+      } 
+      res.status(200).json(response)
+    })
     .catch(error => res.status(200).json({result: false}));
 })
 
 rotas.get('/:id', async (req, res) => {
   const { id } = req.params
   prisma.cLIENTES.findUnique({ where: { ID_CLIENTE: Number(id) } })
-    .then(response => res.status(200).json(response) )
+    .then(async response => {
+  
+      if (response && response?.SEGUE_CLIENTE > 0) {
+        const response2 = await prisma.cLIENTES.findUnique({
+          where:{ID_CLIENTE:response.SEGUE_CLIENTE}           
+        })
+
+        if (response2 && response2.ID_S3 > 0) {
+          response.ID_S3 = response2.ID_S3      
+        }   
+      }
+
+      res.status(200).json(response)
+      })
     .catch(error => res.status(200).json({result: false}));  
 })
 
