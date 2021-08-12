@@ -26,7 +26,8 @@ rotas.post('/', async (req, res) => {
  
   try {
     if ( Array.isArray(data) ) {
-      for (const [idx, element] of data.entries()) {
+      res.status(200).json(data)
+      for (const [idx, element] of data.entries()) {        
         const response = await prisma.lOGS.create({
             data: element          
         })       
