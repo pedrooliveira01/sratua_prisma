@@ -31,7 +31,7 @@ router.get('/datahora', async (req, res) => {
   const str = await datahora.toLocaleString('pt-BR',{
     timeZone: 'America/Sao_Paulo'
   } );
-  res.status(500).json({result:str}) 
+  res.status(200).json({result:str}) 
 })
 
 router.use('/atualizacoes', atualizacaoController);
