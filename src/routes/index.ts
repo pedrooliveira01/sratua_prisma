@@ -27,8 +27,11 @@ router.get('/ping', async (req, res) => {
 })
 
 router.get('/datahora', async (req, res) => {
-  const str = new Date().toLocaleString('pt-BR');
-  res.status(200).json({result:str}) 
+  const datahora = new Date();
+  const str = await datahora.toLocaleString('pt-BR',{
+    timeZone: 'America/Sao_Paulo'
+  } );
+  res.status(500).json({result:str}) 
 })
 
 router.use('/atualizacoes', atualizacaoController);
