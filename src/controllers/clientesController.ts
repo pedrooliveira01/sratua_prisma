@@ -68,7 +68,6 @@ rotas.post('/', async (req, res) => {
     }    
 
   } catch (err) {
-    console.log(err.message)
     res.status(200).json({ result: false})
   }
 })
@@ -94,7 +93,6 @@ rotas.put('/', async (req, res) => {
     }    
 
   } catch (err) {
-    console.log(err.message)
     res.status(200).json({ result: false})
   } 
 })

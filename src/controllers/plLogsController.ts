@@ -36,7 +36,6 @@ rotas.post('/', async (req, res) => {
       res.status(200).json({result: false})
     }    
   } catch (err) {
-    console.log(err.message)
     res.status(200).json({ result: false})
   } 
 })
@@ -59,7 +58,6 @@ rotas.put('/', async (req, res) => {
       res.status(200).json({result: false})
     }    
   } catch (err) {
-    console.log(err.message)
     res.status(200).json({ result: false})
   }
 })

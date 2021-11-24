@@ -26,6 +26,11 @@ router.get('/ping', async (req, res) => {
   res.status(200).json({result:'pong'}) 
 })
 
+router.get('/datahora', async (req, res) => {
+  const str = new Date().toLocaleString('pt-BR');
+  res.status(200).json({result:str}) 
+})
+
 router.use('/atualizacoes', atualizacaoController);
 router.use('/clientes', clientesController);
 router.use('/clientecontroles', clientesControleController);
